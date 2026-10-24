@@ -1,0 +1,116 @@
+{
+  "project_name": "LocalBiz AI",
+  "archetype": "LUXURY & HIGH-CONTRAST CONCIERGE (The Obsidian & Champagne Gold Protocol)",
+  "app_type": "hybrid_fullstack (SaaS marketing site + multi-tenant dashboard)",
+  "theme": "Dark Charcoal, Rich Obsidian & Champagne Gold Accents with Light Contrast Sub-Surfaces",
+  "typography": {
+    "heading_font": "Cormorant Garamond, Serif",
+    "subheading_display_font": "Outfit, Sans-serif",
+    "body_font": "Plus Jakarta Sans, Sans-serif",
+    "mono_font": "JetBrains Mono, Monospace",
+    "anti_default_rule": "BANNED: Inter, Roboto, Open Sans for headings. Use Cormorant Garamond for main brand/hero headings and Outfit for section headers/dashboard titles.",
+    "hierarchy": {
+      "hero_h1": "text-4xl sm:text-5xl lg:text-6xl font-serif font-semibold tracking-tight leading-[1.1]",
+      "section_h2": "text-2xl sm:text-3xl lg:text-4xl font-serif font-medium tracking-normal text-slate-100",
+      "card_h3": "text-lg sm:text-xl font-sans font-semibold tracking-wide text-amber-100",
+      "sub_label": "text-xs uppercase tracking-[0.25em] text-amber-400/90 font-mono font-medium",
+      "body_text": "text-sm sm:text-base text-slate-300 font-sans leading-relaxed"
+    }
+  },
+  "colors": {
+    "background_main": "#0B0C0E",
+    "surface_dark": "#121418",
+    "surface_card": "#181B20",
+    "surface_card_border": "rgba(212, 175, 55, 0.18)",
+    "primary_gold": "#D4AF37",
+    "primary_gold_hover": "#E6C659",
+    "champagne_accent": "#F3E5AB",
+    "champagne_glow": "rgba(212, 175, 55, 0.15)",
+    "charcoal_deep": "#070809",
+    "charcoal_subdued": "#1E222A",
+    "text_primary": "#F8FAFC",
+    "text_secondary": "#94A3B8",
+    "text_muted": "#64748B",
+    "status_success": "#10B981",
+    "status_warning": "#F59E0B",
+    "status_error": "#EF4444",
+    "status_info": "#3B82F6",
+    "rules": [
+      "No generic full-screen blue gradients.",
+      "Never use pure black #000000; use obsidian charcoal #0B0C0E.",
+      "Gold (#D4AF37 / #F3E5AB) is reserved for high-value CTA buttons, active states, key stats highlights, and delicate 1px borders.",
+      "Ensure high contrast meeting APCA standards for dark background readability."
+    ]
+  },
+  "visual_enhancers": {
+    "glassmorphism": "backdrop-blur-xl bg-slate-950/70 border border-amber-500/20 shadow-[0_8px_32px_rgba(0,0,0,0.4)]",
+    "tracing_beam_card": "relative rounded-2xl bg-gradient-to-b from-slate-900/90 to-slate-950/90 p-6 border border-amber-500/20 hover:border-amber-400/40 transition-all duration-300 shadow-xl",
+    "champagne_badge": "inline-flex items-center px-3 py-1 rounded-full text-xs font-mono font-medium bg-amber-500/10 text-amber-300 border border-amber-500/30",
+    "ambient_glow": "absolute radial-gradient-gold blur-[120px] opacity-20 pointer-events-none"
+  },
+  "spacing_and_layout": {
+    "generous_spacing": "Use 2x-3x standard spacing. Sections must use py-20 lg:py-32 and px-4 sm:px-8 lg:px-12.",
+    "container_padding": "Card containers must have inner padding (p-6 to p-8) to avoid text-edge collisions.",
+    "bento_grid_marketing": "grid grid-cols-1 md:grid-cols-8 lg:grid-cols-12 gap-6 lg:gap-8",
+    "dashboard_grid": "grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6"
+  },
+  "navigation_and_header": {
+    "desktop_nav": "Sticky or top-fixed header with backdrop blur (bg-slate-950/80 backdrop-blur-md), subtle gold bottom border (border-b border-amber-500/20), z-50.",
+    "links": "Marketing pages must show direct visible desktop links for Solutions, How It Works, Live Demo, Pricing, FAQs, and Login/Get Started CTA.",
+    "dashboard_nav": "Left sidebar on desktop with multi-tenant workspace switcher, active link indicators with champagne gold pill highlight, top header with notification bell, AI assistant status indicator, and quick action schedule button."
+  },
+  "component_usage_rules": {
+    "file_format": "All frontend components are written in .js / .jsx (React JavaScript, not TypeScript .tsx).",
+    "interactive_components": "Use Shadcn components (Dialog, DropdownMenu, Tabs, Calendar, Switch, Select, Table, Sheet, Sonner) with heavy Tailwind override for dark luxury gold theme.",
+    "forms": "Never use plain raw select; use Shadcn Select/Dropdown. For date pickers, use Shadcn Calendar popover.",
+    "toasts": "Use Sonner toast component located in src/components/ui/sonner.jsx for booking confirmations, lead follow-up triggers, and settings updates."
+  },
+  "motion_and_interactions": {
+    "library": "Framer Motion for smooth page transitions, stagger child reveals, floating AI concierge widgets, and modal entrances.",
+    "interactive_states": "All buttons must have active press, hover scaling (hover:scale-[1.02]), and focus rings (focus:ring-2 focus:ring-amber-400/50). Exclude 'transform' from universal transitions.",
+    "micro_animations": "Glowing pulse on live AI call reception status (e.g., 'AI Phone Reception: Active')."
+  },
+  "image_urls": {
+    "luxury_concierge_bell": {
+      "url": "https://images.pexels.com/photos/5378701/pexels-photo-5378701.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "category": "hero_banner / concierge_reception",
+      "description": "Golden bell on luxury reception desk representing 24/7 AI reception."
+    },
+    "executive_workspace": {
+      "url": "https://images.pexels.com/photos/8937611/pexels-photo-8937611.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "category": "dashboard_preview / business_owner",
+      "description": "Executive working on laptop at modern luxury desk."
+    },
+    "luxury_salon_spa": {
+      "url": "https://images.unsplash.com/photo-1758448093806-88b2089068ab?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzh8MHwxfHNlYXJjaHw0fHxtb2Rlcm4lMjBsdXh1cnklMjBzYWxvbiUyMGludGVyaW9yJTIwc3BhJTIwc3R1ZGlvJTIwdXBzY2FsZSUyMGJ1c2luZXNzfGVufDB8fHx8MTc5MjY2NzgxN3ww&ixlib=rb-4.1.0&q=85",
+      "category": "vertical_solutions / salon_spa_testimonial",
+      "description": "Modern high-end boutique lobby for local service businesses."
+    },
+    "upscale_lounge": {
+      "url": "https://images.unsplash.com/photo-1758448511255-ac2a24a135d7?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzh8MHwxfHNlYXJjaHwzfHxtb2Rlcm4lMjBsdXh1cnklMjBzYWxvbiUyMGludGVyaW9yJTIwc3BhJTIwc3R1ZGlvJTIwdXBzY2FsZSUyMGJ1c2luZXNzfGVufDB8fHx8MTc5MjY2NzgxN3ww&ixlib=rb-4.1.0&q=85",
+      "category": "case_studies / feature_grid",
+      "description": "Luxury boutique waiting area."
+    }
+  },
+  "testing_and_accessibility": {
+    "data_testid_requirement": "EVERY interactive element (buttons, tabs, inputs, links, modals, calendar dates, settings toggles) MUST have kebab-case role-based data-testid attributes.",
+    "test_id_examples": [
+      "data-testid=\"hero-cta-button\"",
+      "data-testid=\"nav-login-link\"",
+      "data-testid=\"dashboard-sidebar-leads-link\"",
+      "data-testid=\"ai-chat-assistant-toggle\"",
+      "data-testid=\"appointment-schedule-confirm-button\"",
+      "data-testid=\"lead-follow-up-email-button\"",
+      "data-testid=\"business-onboarding-submit-button\"",
+      "data-testid=\"billing-upgrade-plan-button\""
+    ]
+  },
+  "instructions_to_main_agent": [
+    "Ensure both Marketing Homepage and Dashboard/Admin flows are fully integrated in React.",
+    "Incorporate simulated interactive AI Assistant widgets (AI phone receptionist simulator with voice wave playback & AI web chat widget preview).",
+    "Support multi-tenant business switching (e.g., 'Aura Luxury Spa', 'Vanguard Law Firm', 'Apex Dental Studio').",
+    "Provide clear tabs in the Business Owner Dashboard: Overview, AI Phone Receptionist, Chat Assistant, Lead Follow-ups, Appointment Calendar, Customers, Customization, Billing, and Admin Tools.",
+    "Follow dark charcoal & champagne gold styling relentlessly. Avoid default white canvas or saturated blue buttons.",
+    "Include sample data for bookings, leads with automated email/SMS sequence status, and AI phone transcripts."
+  ]
+}
