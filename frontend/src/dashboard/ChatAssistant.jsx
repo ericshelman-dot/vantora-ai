@@ -87,8 +87,8 @@ export default function ChatAssistant() {
   return (
     <div>
       <PageHeader eyebrow="Assistant" title="Website Chat Assistant" desc="Preview your embeddable AI chat widget and copy the install snippet for your website." />
-      <div className="grid lg:grid-cols-2 gap-6">
-        <div className="lux-card p-0 flex flex-col h-[520px]">
+      <div className="grid items-start gap-6 md:grid-cols-[minmax(0,380px)_minmax(0,1fr)]">
+        <div className="lux-card p-0 flex flex-col h-[520px] w-full max-w-[380px] min-w-0">
           <div className="px-5 py-4 border-b border-amber-500/15 flex items-center gap-3">
             <div className="w-9 h-9 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center"><Bot className="w-4 h-4 text-gold" /></div>
             <div className="flex-1"><div className="font-display font-semibold text-sm">{business?.name} Assistant</div><div className="text-xs text-emerald-400">Online · Powered by AI</div></div>
