@@ -4,6 +4,10 @@ The authenticated `/dashboard/sales` page adds an isolated pilot to the existing
 
 ## Available now
 
+Two workflows are available in the same page: **Grow Vantora** sells Vantora to salon owners, and **Grow a Salon** supports an authorized salon's customer inquiries. Each has its own pipeline, reports, templates, example data and live authorization. Vantora qualification uses decision-maker confirmation; salon qualification uses confirmation of the customer's service request. Their recorded values are never added together.
+
+Every list, mutation, consent and pause operation is scoped by the selected workflow as well as tenant and demo/live mode. Unlabelled prospect records from the initial release remain visible only under Grow Vantora without a database rewrite. Legacy consent without an explicit workflow does not enable either workflow: the owner must authorize the intended use explicitly. Pausing one workflow does not pause the other. Both workflows remain draft-only and calendar-gated.
+
 - Owner-entered prospects with need, decision maker, timing, source and contact permission evidence.
 - Explainable qualification: 25 points each for need, decision maker, timing this month and recorded permission; qualification threshold is 50. This is a prioritization aid, not a prediction.
 - Free, deterministic personalized outreach templates, editing and approval of the saved revision. Approval records review only; nothing is delivered.
@@ -21,7 +25,7 @@ This module imports no LLM, messaging, calendar or payment client. There are no 
 
 ## Required owner decisions before live use
 
-1. Confirm whether the first objective is selling Vantora to salons or helping a consenting salon manage its own inquiries. The same draft pipeline can support either; service/offer text must match the chosen objective.
+1. The owner requested both objectives: selling Vantora to salons and helping a consenting salon manage its own inquiries. Select the appropriate workflow before adding data. Service/offer text and consent scope must match that workflow.
 2. Obtain the salon owner's direct agreement. The user's daughter is a candidate only; no salon name, permission or account access is assumed.
 3. Supply the approved business name, services/offer, contact person, timezone, permitted data sources and retention expectations. Enter prospect-specific contact permission evidence separately.
 4. Choose a calendar provider and approve the exact account/scopes. OAuth, token storage, revocation, availability checks, collision handling, idempotent event creation and booking confirmation require a later implementation. Proposals are intentionally blocked from claiming a booking until that work is reviewed and authorized.

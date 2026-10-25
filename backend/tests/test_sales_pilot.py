@@ -18,7 +18,18 @@ class Collection:
         self.rows = []
 
     def matching(self, query):
-        return [r for r in self.rows if all(r.get(k) == v for k, v in query.items())]
+        def matches(row, q):
+            for k, v in q.items():
+                if k == "$or":
+                    if not any(matches(row, child) for child in v):
+                        return False
+                elif isinstance(v, dict) and "$exists" in v:
+                    if (k in row) != v["$exists"]:
+                        return False
+                elif row.get(k) != v:
+                    return False
+            return True
+        return [r for r in self.rows if matches(r, query)]
 
     def find(self, query, projection=None):
         rows = copy.deepcopy(self.matching(query))
@@ -163,3 +174,58 @@ def test_unauthenticated_access_is_denied():
     app.include_router(router(None, reject))
     with TestClient(app) as c:
         assert c.get("/api/sales-pilot").status_code == 401
+
+
+def test_workflows_isolate_records_actions_reports_and_templates(pilot):
+    c, _, _ = pilot
+    sales = add(c).json()
+    customer = c.post("/api/sales-pilot/prospects?workflow=salon_customers", json={
+        "name": "Jamie Example", "company": "Fictional Salon", "service": "Haircut consultation",
+        "source": "Synthetic", "need": "Consultation next week", "request_confirmed": True,
+        "permission": "granted", "permission_evidence": "Synthetic permission", "timing": "this_month"
+    }).json()
+    customer_url = f"/api/sales-pilot/prospects/{customer['prospect_id']}/actions?workflow=salon_customers"
+    assert c.get("/api/sales-pilot").json()["report"]["total"] == 1
+    customers = c.get("/api/sales-pilot?workflow=salon_customers").json()
+    assert customers["report"]["total"] == 1
+    assert customers["prospects"][0]["qualification"]["score"] == 100
+    assert "Customer request confirmed" in customers["prospects"][0]["qualification"]["reasons"]
+    assert act(c, customer, "draft").status_code == 404
+    assert c.post(f"/api/sales-pilot/prospects/{sales['prospect_id']}/actions?workflow=salon_customers", json={"kind": "draft", "expected_revision": 0}).status_code == 404
+    drafted = c.post(customer_url, json={"kind": "draft", "expected_revision": 0}).json()
+    assert "Haircut consultation at Fictional Salon" in drafted["draft"]["message"]
+    assert "Vantora" not in drafted["draft"]["message"]
+    won = c.post(customer_url, json={"kind": "stage", "stage": "won", "text": "Synthetic service conversion", "revenue_cents": 5000, "expected_revision": 1})
+    assert won.status_code == 200
+    assert c.get("/api/sales-pilot?workflow=salon_customers").json()["report"]["recorded_revenue_cents"] == 5000
+    assert c.get("/api/sales-pilot").json()["report"]["recorded_revenue_cents"] == 0
+
+
+def test_legacy_records_remain_only_in_vantora_sales(pilot):
+    c, db, _ = pilot
+    legacy = add(c).json()
+    del db.sales_pilot_demo.rows[0]["workflow"]
+    assert c.get("/api/sales-pilot").json()["prospects"][0]["prospect_id"] == legacy["prospect_id"]
+    assert c.get("/api/sales-pilot?workflow=salon_customers").json()["prospects"] == []
+    assert act(c, legacy, "draft").status_code == 200
+
+
+def test_live_consent_and_pause_are_specific_to_each_workflow(pilot):
+    c, db, _ = pilot
+    setup = dict(business_name="Authorized Test Salon", owner_name="Owner", services="Approved workflow",
+                 timezone="America/New_York", consent_evidence="Owner explicitly agreed to this workflow", owner_consented=True)
+    assert c.post("/api/sales-pilot/setup", json=setup).status_code == 200
+    assert not c.get("/api/sales-pilot?mode=live&workflow=salon_customers").json()["ready"]
+    payload = dict(name="Jamie", company="Authorized Test Salon", service="Haircut", source="Approved test")
+    assert c.post("/api/sales-pilot/prospects?mode=live&workflow=salon_customers", json=payload).status_code == 403
+    assert c.post("/api/sales-pilot/setup?workflow=salon_customers", json=setup).status_code == 200
+    assert c.post("/api/sales-pilot/prospects?mode=live&workflow=salon_customers", json=payload).status_code == 200
+    assert c.post("/api/sales-pilot/pause?workflow=salon_customers").status_code == 200
+    assert not c.get("/api/sales-pilot?mode=live&workflow=salon_customers").json()["ready"]
+    assert c.get("/api/sales-pilot?mode=live").json()["ready"]
+    assert len(db.sales_pilot_live.rows) == 1
+
+
+def test_unknown_workflow_is_rejected(pilot):
+    c, _, _ = pilot
+    assert c.get("/api/sales-pilot?workflow=anything").status_code == 422

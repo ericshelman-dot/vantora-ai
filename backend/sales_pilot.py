@@ -6,6 +6,8 @@ import uuid
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field, ConfigDict
 
+Workflow = Literal["vantora_sales", "salon_customers"]
+
 
 def stamp():
     return datetime.now(timezone.utc).isoformat()
@@ -23,6 +25,7 @@ class Prospect(Input):
     need: str = Field(default="", max_length=1000)
     email: str = Field(default="", max_length=254)
     decision_maker: bool = False
+    request_confirmed: bool = False
     timing: Literal["unknown", "later", "this_month"] = "unknown"
     permission: Literal["unknown", "granted", "opted_out"] = "unknown"
     permission_evidence: str = Field(default="", max_length=500)
@@ -50,8 +53,10 @@ class Action(Input):
 
 def qualify(p):
     reasons = []
-    for yes, label in [(bool(p.get("need")), "Business need recorded"),
-                       (p.get("decision_maker"), "Decision maker confirmed"),
+    customer = p.get("workflow") == "salon_customers"
+    for yes, label in [(bool(p.get("need")), "Customer need recorded" if customer else "Business need recorded"),
+                       (p.get("request_confirmed") if customer else p.get("decision_maker"),
+                        "Customer request confirmed" if customer else "Decision maker confirmed"),
                        (p.get("timing") == "this_month", "Timing within this month"),
                        (p.get("permission") == "granted", "Outreach permission recorded")]:
         if yes:
@@ -69,9 +74,16 @@ def apply_action(p, body, actor):
     if body.kind in {"draft", "approve_draft"} and p["permission"] != "granted":
         raise HTTPException(409, "Record contact permission before preparing outreach.")
     if body.kind == "draft":
-        p["draft"] = {"message": f"Hi {p['name']}, you mentioned {p['need'] or p['service']}. "
+        if p.get("workflow") == "salon_customers":
+            message = (f"Hi {p['name']}, thank you for your interest in {p['service']} at {p['company']}. "
+                       f"Regarding your request: {p['need'] or p['service']}. "
+                       "Would you like us to propose an appointment time? "
+                       "If you would prefer no follow-up, please let us know.")
+        else:
+            message = (f"Hi {p['name']}, you mentioned {p['need'] or p['service']}. "
                       f"Would a short conversation about {p['service']} for {p['company']} be useful? "
-                      "If you would prefer no follow-up, please let us know.",
+                      "If you would prefer no follow-up, please let us know.")
+        p["draft"] = {"message": message,
                       "status": "pending", "revision": p["revision"] + 1, "created_at": ts,
                       "generator": "local template", "delivery": "not_sent"}
     elif body.kind == "edit_draft":
@@ -100,6 +112,7 @@ def apply_action(p, body, actor):
         except ValueError:
             raise HTTPException(422, "Choose a future appointment with an explicit timezone offset.")
         p["booking_proposal"] = {"starts_at": start.isoformat(), "duration_min": body.duration_min,
+                                 "kind": "appointment" if p.get("workflow") == "salon_customers" else "demo",
                                  "status": "awaiting_calendar_authorization", "created_at": ts,
                                  "calendar_event_created": False}
     elif body.kind == "stage":
@@ -132,8 +145,15 @@ def router(db, current_user):
     def collection(mode):
         return db.sales_pilot_demo if mode == "demo" else db.sales_pilot_live
 
-    async def enabled(user, mode):
+    def prospect_scope(user, mode, workflow):
         s = scope(user, mode)
+        if workflow == "vantora_sales":
+            # The first release's unlabelled prospects remain in Vantora sales only.
+            return {**s, "$or": [{"workflow": workflow}, {"workflow": {"$exists": False}}]}
+        return {**s, "workflow": workflow}
+
+    async def enabled(user, mode, workflow):
+        s = {**scope(user, mode), "workflow": workflow}
         if mode == "live" and not await db.sales_pilot_consents.find_one({**s, "active": True}):
             raise HTTPException(403, "Business owner consent and setup are required before live data can be used.")
         return s
@@ -143,14 +163,14 @@ def router(db, current_user):
                 "action": kind, "prospect_id": prospect_id}
 
     @api.get("")
-    async def workspace(mode: Literal["demo", "live"] = "demo", user=Depends(current_user)):
-        s = scope(user, mode)
+    async def workspace(mode: Literal["demo", "live"] = "demo", workflow: Workflow = "vantora_sales", user=Depends(current_user)):
+        s = {**scope(user, mode), "workflow": workflow}
         setup = await db.sales_pilot_consents.find_one({**s, "active": True}, {"_id": 0}) if mode == "live" else None
-        rows = await collection(mode).find(s, {"_id": 0}).to_list(1000) if mode == "demo" or setup else []
+        rows = await collection(mode).find(prospect_scope(user, mode, workflow), {"_id": 0}).to_list(1000) if mode == "demo" or setup else []
         for p in rows:
             p["qualification"] = qualify(p)
         won = [p for p in rows if p["stage"] == "won"]
-        return {"mode": mode, "ready": mode == "demo" or bool(setup), "prospects": rows,
+        return {"mode": mode, "workflow": workflow, "ready": mode == "demo" or bool(setup), "prospects": rows,
                 "report": {"total": len(rows), "qualified": sum(qualify(p)["score"] >= 50 for p in rows),
                            "responses": sum(bool(p.get("responses")) for p in rows), "won": len(won),
                            "conversion_percent": round(len(won) / len(rows) * 100, 1) if rows else 0,
@@ -160,28 +180,28 @@ def router(db, current_user):
                                "report_limit": 1000}, "setup": setup}
 
     @api.post("/setup")
-    async def setup(body: Setup, user=Depends(current_user)):
+    async def setup(body: Setup, workflow: Workflow = "vantora_sales", user=Depends(current_user)):
         from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
         try:
             ZoneInfo(body.timezone)
         except (ZoneInfoNotFoundError, ValueError):
             raise HTTPException(422, "Unknown timezone")
-        s = scope(user, "live")
+        s = {**scope(user, "live"), "workflow": workflow}
         record = {**s, **body.model_dump(), "active": True, "recorded_by": user["user_id"], "recorded_at": stamp()}
         await db.sales_pilot_consents.update_one(s, {"$set": record,
                   "$push": {"audit": event(user, "owner_consent_recorded")}}, upsert=True)
         return {"ready": True, "calendar": "not_connected", "sending_enabled": False}
 
     @api.post("/pause")
-    async def pause(user=Depends(current_user)):
-        s = scope(user, "live")
+    async def pause(workflow: Workflow = "vantora_sales", user=Depends(current_user)):
+        s = {**scope(user, "live"), "workflow": workflow}
         await db.sales_pilot_consents.update_one(s, {"$set": {"active": False},
                   "$push": {"audit": event(user, "owner_authorization_paused")}})
         return {"ready": False, "data_preserved": True}
 
     @api.post("/prospects")
-    async def create(body: Prospect, mode: Literal["demo", "live"] = "demo", user=Depends(current_user)):
-        s = await enabled(user, mode)
+    async def create(body: Prospect, mode: Literal["demo", "live"] = "demo", workflow: Workflow = "vantora_sales", user=Depends(current_user)):
+        s = await enabled(user, mode, workflow)
         if body.permission == "granted" and not body.permission_evidence:
             raise HTTPException(422, "Permission requires evidence.")
         if mode == "demo" and body.email and not body.email.endswith("@example.com"):
@@ -194,10 +214,10 @@ def router(db, current_user):
         return p
 
     @api.post("/prospects/{pid}/actions")
-    async def act(pid: str, body: Action, mode: Literal["demo", "live"] = "demo", user=Depends(current_user)):
-        s = await enabled(user, mode)
+    async def act(pid: str, body: Action, mode: Literal["demo", "live"] = "demo", workflow: Workflow = "vantora_sales", user=Depends(current_user)):
+        await enabled(user, mode, workflow)
         c = collection(mode)
-        query = {**s, "prospect_id": pid}
+        query = {**prospect_scope(user, mode, workflow), "prospect_id": pid}
         p = await c.find_one(query, {"_id": 0})
         if not p:
             raise HTTPException(404, "Prospect not found")
