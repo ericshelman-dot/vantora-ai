@@ -19,14 +19,14 @@ def login(email, pw):
 
 @pytest.fixture(scope="module")
 def admin_h():
-    h = login("admin@vantora.ai", os.environ["ADMIN_PASSWORD"])
+    h = login("admin@vantora.ai", os.environ['ADMIN_PASSWORD'])
     yield h
     requests.post(f"{API}/admin/demo-workspace/exit", headers=h)
 
 
 @pytest.fixture(scope="module")
 def owner_h():
-    return login("demo@aurasalon.com", os.environ["DEMO_OWNER_PASSWORD"])
+    return login("demo@aurasalon.com", os.environ['DEMO_OWNER_PASSWORD'])
 
 
 @pytest.fixture(scope="module")

@@ -26,7 +26,7 @@ def login(email, pw):
 @pytest.fixture(scope="module")
 def owner():
     s = requests.Session()
-    s.headers["Authorization"] = f"Bearer {login('demo@aurasalon.com', os.environ["DEMO_OWNER_PASSWORD"])}"
+    s.headers["Authorization"] = f"Bearer {login('demo@aurasalon.com', os.environ['DEMO_OWNER_PASSWORD'])}"
     return s
 
 
@@ -122,7 +122,7 @@ def test_isolation(owner):
     ls = requests.get(f"{API}/leads", headers=h).json()
     assert not any(l.get("email_norm") == JESS for l in ls)
     assert requests.get(f"{API}/leads/{jid}", headers=h).status_code == 404
-    ah = {"Authorization": f"Bearer {login('admin@vantora.ai', os.environ["ADMIN_PASSWORD"])}"}
+    ah = {"Authorization": f"Bearer {login('admin@vantora.ai', os.environ['ADMIN_PASSWORD'])}"}
     assert requests.get(f"{API}/leads", headers=ah).status_code == 403
     assert requests.get(f"{API}/leads/{jid}", headers=ah).status_code == 403
 

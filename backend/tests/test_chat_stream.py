@@ -13,12 +13,12 @@ def login(email, pw):
 
 @pytest.fixture(scope="module")
 def owner():
-    return login("demo@aurasalon.com", os.environ["DEMO_OWNER_PASSWORD"])
+    return login("demo@aurasalon.com", os.environ['DEMO_OWNER_PASSWORD'])
 
 
 @pytest.fixture(scope="module")
 def admin():
-    return login("admin@localbiz.ai", os.environ["ADMIN_PASSWORD"])
+    return login("admin@localbiz.ai", os.environ['ADMIN_PASSWORD'])
 
 
 def stream(payload, token=None):

@@ -23,7 +23,7 @@ def login(email, pw):
 @pytest.fixture(scope="module")
 def owner():
     s = requests.Session()
-    s.headers["Authorization"] = f"Bearer {login('demo@aurasalon.com', os.environ["DEMO_OWNER_PASSWORD"])}"
+    s.headers["Authorization"] = f"Bearer {login('demo@aurasalon.com', os.environ['DEMO_OWNER_PASSWORD'])}"
     return s
 
 

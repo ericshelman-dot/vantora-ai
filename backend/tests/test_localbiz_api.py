@@ -7,8 +7,8 @@ import pytest
 import requests
 
 BASE_URL = os.environ.get("REACT_APP_BACKEND_URL").rstrip("/")
-OWNER = {"email": "demo@aurasalon.com", "password": os.environ["DEMO_OWNER_PASSWORD"]}
-ADMIN = {"email": "admin@localbiz.ai", "password": os.environ["ADMIN_PASSWORD"]}
+OWNER = {"email": "demo@aurasalon.com", "password": os.environ['DEMO_OWNER_PASSWORD']}
+ADMIN = {"email": "admin@localbiz.ai", "password": os.environ['ADMIN_PASSWORD']}
 
 
 def _login(creds):

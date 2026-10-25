@@ -22,12 +22,12 @@ def h(tok):
 
 @pytest.fixture(scope="module")
 def admin_tok():
-    return login("admin@vantora.ai", os.environ["ADMIN_PASSWORD"])["token"]
+    return login("admin@vantora.ai", os.environ['ADMIN_PASSWORD'])["token"]
 
 
 @pytest.fixture(scope="module")
 def owner_tok():
-    return login("demo@aurasalon.com", os.environ["DEMO_OWNER_PASSWORD"])["token"]
+    return login("demo@aurasalon.com", os.environ['DEMO_OWNER_PASSWORD'])["token"]
 
 
 # --- Root & plans
@@ -44,17 +44,17 @@ def test_plans_public():
 
 # --- Auth
 def test_admin_vantora_login():
-    d = login("admin@vantora.ai", os.environ["ADMIN_PASSWORD"])
+    d = login("admin@vantora.ai", os.environ['ADMIN_PASSWORD'])
     assert d["user"]["role"] == "admin" and d["user"]["business_id"] is None
 
 
 def test_legacy_admin_login():
-    d = login("admin@localbiz.ai", os.environ["ADMIN_PASSWORD"])
+    d = login("admin@localbiz.ai", os.environ['ADMIN_PASSWORD'])
     assert d["user"]["role"] == "admin"
 
 
 def test_owner_login():
-    d = login("demo@aurasalon.com", os.environ["DEMO_OWNER_PASSWORD"])
+    d = login("demo@aurasalon.com", os.environ['DEMO_OWNER_PASSWORD'])
     assert d["user"]["role"] == "owner" and d["user"]["business_id"]
 
 
