@@ -51,7 +51,7 @@ export default function SalesPilot() {
       <span className="text-sm text-amber-300 self-center">{mode === "demo" ? "Fictional data only · separate demo storage" : "Business data · owner authorization required"}</span>
       {mode === "live" && data?.ready && <button className={button} disabled={busy} onClick={() => run(() => api.post("/sales-pilot/pause"))}>Pause live authorization</button>}
     </div>
-    <div className="lux-card p-4 mb-5 text-sm text-slate-400">Sending disabled · Calendar not connected · Free local templates · No paid AI calls. Your daughter's salon remains a candidate until its owner explicitly agrees.</div>
+    <div className="lux-card p-4 mb-5 text-sm text-slate-400">Sending disabled · Calendar not connected · Free local templates · No paid AI calls. Live business data requires the owner's explicit authorization.</div>
     {error && <div role="alert" className="p-4 mb-4 border border-red-500/40 text-red-300">{error}</div>}
     {data && <>
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">{[["Prospects", data.report.total], ["Qualified ≥50", data.report.qualified], ["Responded", data.report.responses], ["Won", data.report.won], ["Conversion", `${data.report.conversion_percent}%`]].map(([label, value]) => <div key={label} className="lux-card p-4"><p className="text-xs text-slate-400">{label}</p><strong className="text-2xl">{value}</strong></div>)}</div>
@@ -70,13 +70,13 @@ export default function SalesPilot() {
             })}>Add fictional salon prospect</button>}
             {data.prospects.length === 0 && <p className="text-slate-400 text-sm">No prospects yet. Add a fictional example or an owner-approved prospect.</p>}
             <div className="space-y-2 max-h-80 overflow-y-auto">{data.prospects.map(row => <button key={row.prospect_id} onClick={() => setSelected(row.prospect_id)} className={`w-full text-left p-3 rounded border ${selected === row.prospect_id ? "border-amber-400" : "border-white/10"}`}><strong>{row.company}</strong><p className="text-sm text-slate-400">{row.name} · {row.stage} · {row.qualification.score}/100 · {row.permission}</p></button>)}</div>
-            <form className="space-y-3 border-t border-white/10 pt-4" onSubmit={e => { e.preventDefault(); run(async () => { const { data: created } = await api.post(`/sales-pilot/prospects?mode=${mode}`, form); setSelected(created.prospect_id); setForm(blank); }); }}>
+            <details className="border-t border-white/10 pt-4"><summary>Add prospect manually</summary><form className="space-y-3 pt-4" onSubmit={e => { e.preventDefault(); run(async () => { const { data: created } = await api.post(`/sales-pilot/prospects?mode=${mode}`, form); setSelected(created.prospect_id); setForm(blank); }); }}>
               <h3>Add prospect</h3>{input("Contact name", "name", form, setForm)}{input("Business", "company", form, setForm)}{input("Proposed service / demo", "service", form, setForm)}{input("Source", "source", form, setForm)}{input("Business need", "need", form, setForm)}{input("Email (optional; example.com in demo)", "email", form, setForm, "email")}
               <label className="block text-sm"><input type="checkbox" checked={form.decision_maker} onChange={e => setForm({ ...form, decision_maker: e.target.checked })} /> Decision maker confirmed</label>
               <label className="block text-sm">Timing<select className={field} value={form.timing} onChange={e => setForm({ ...form, timing: e.target.value })}><option value="unknown">Unknown</option><option value="later">Later</option><option value="this_month">This month</option></select></label>
               <label className="block text-sm">Outreach permission<select className={field} value={form.permission} onChange={e => setForm({ ...form, permission: e.target.value })}><option value="unknown">Unknown — outreach blocked</option><option value="granted">Granted with evidence</option><option value="opted_out">Opted out</option></select></label>
               {input("Permission evidence", "permission_evidence", form, setForm)}<button className={button} disabled={busy}>Save prospect</button>
-            </form>
+            </form></details>
           </section>
           <section className="lux-card p-5 space-y-5">{p ? <>
             <h2 className="text-xl">{p.company}</h2><p className="text-sm text-slate-400">Qualification: {p.qualification.score}/100. {p.qualification.reasons.join(" · ") || "More information needed"}. Rules award 25 points for need, decision maker, near-term timing and permission.</p>
