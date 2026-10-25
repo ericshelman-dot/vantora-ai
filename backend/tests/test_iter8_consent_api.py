@@ -22,7 +22,7 @@ def login(email, pw):
 @pytest.fixture(scope="module")
 def owner():
     s = requests.Session()
-    s.headers["Authorization"] = f"Bearer {login('demo@aurasalon.com', os.environ["DEMO_OWNER_PASSWORD"])}"
+    s.headers["Authorization"] = f"Bearer {login('demo@aurasalon.com', os.environ['DEMO_OWNER_PASSWORD'])}"
     return s
 
 
@@ -112,7 +112,7 @@ def test_name_capture_mia(owner):
 
 
 def test_admin_without_workspace_403():
-    h = {"Authorization": f"Bearer {login('admin@vantora.ai', os.environ["ADMIN_PASSWORD"])}"}
+    h = {"Authorization": f"Bearer {login('admin@vantora.ai', os.environ['ADMIN_PASSWORD'])}"}
     requests.post(f"{API}/admin/demo-workspace/exit", headers=h)
     r = requests.get(f"{API}/leads", headers=h)
     assert r.status_code == 403, r.text

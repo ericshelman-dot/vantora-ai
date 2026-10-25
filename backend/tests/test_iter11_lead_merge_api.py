@@ -18,7 +18,7 @@ mdb = MongoClient(os.environ["MONGO_URL"])[os.environ["DB_NAME"]]
 
 @pytest.fixture(scope="module")
 def owner():
-    r = requests.post(f"{BASE}/auth/login", json={"email": "demo@aurasalon.com", "password": os.environ["DEMO_OWNER_PASSWORD"]})
+    r = requests.post(f"{BASE}/auth/login", json={"email": "demo@aurasalon.com", "password": os.environ['DEMO_OWNER_PASSWORD']})
     assert r.status_code == 200
     d = r.json()
     return {"h": {"Authorization": f"Bearer {d['token']}"}, "bid": d["user"]["business_id"]}

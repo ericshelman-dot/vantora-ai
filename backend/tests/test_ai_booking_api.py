@@ -20,7 +20,7 @@ def login(email, pw):
 
 @pytest.fixture(scope="module")
 def owner():
-    t = login("demo@aurasalon.com", os.environ["DEMO_OWNER_PASSWORD"])
+    t = login("demo@aurasalon.com", os.environ['DEMO_OWNER_PASSWORD'])
     return {"Authorization": f"Bearer {t}"}
 
 
