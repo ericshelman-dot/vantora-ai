@@ -1016,6 +1016,10 @@ async def root():
 
 
 app.include_router(api_router)
+
+# Additive pilot module; existing authentication, lead records and booking code are unchanged.
+import sales_pilot
+app.include_router(sales_pilot.router(db, get_current_user))
 app.add_middleware(
     CORSMiddleware, allow_credentials=True,
     allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),

@@ -14,6 +14,7 @@ const nav = [
   { to: "/dashboard/phone", label: "AI Phone Reception", icon: PhoneCall, testid: "phone" },
   { to: "/dashboard/chat", label: "Chat Assistant", icon: MessageSquare, testid: "chat" },
   { to: "/dashboard/leads", label: "Lead Follow-ups", icon: UserPlus, testid: "leads" },
+  { to: "/dashboard/sales", label: "Sales & Marketing", icon: Sparkles, testid: "sales" },
   { to: "/dashboard/appointments", label: "Appointments", icon: CalendarCheck, testid: "appointments" },
   { to: "/dashboard/customers", label: "Customers", icon: Users, testid: "customers" },
   { to: "/dashboard/customization", label: "AI Customization", icon: Sliders, testid: "customization" },
