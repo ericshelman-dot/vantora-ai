@@ -12,13 +12,13 @@ import { api } from "@/lib/api";
 const steps = [
   { n: "01", title: "Onboard your business", desc: "Create a secure workspace and add your services, hours, FAQs and brand voice." },
   { n: "02", title: "Train your AI", desc: "Tune tone and knowledge. Your website chat starts answering customers immediately." },
-  { n: "03", title: "Command every opportunity", desc: "Conversations, leads and bookings flow into the Vantora AI Console with follow-ups queued." },
+  { n: "03", title: "Command every opportunity", desc: "Conversations, leads and bookings flow into the Eazy’s Business AI Console with follow-ups queued." },
 ];
 
 const faqs = [
   { q: "What is live today, and what is simulated?", a: "AI Website Chat runs on a live AI model. Appointment scheduling, lead management and the dashboard are fully functional. AI phone reception and email/SMS follow-up delivery are simulated in this stage — calls and sends are generated and logged in your console, but no real calls are answered and no messages leave the platform." },
   { q: "Is my customer data separated from other businesses?", a: "Yes. Every business operates in an isolated workspace. Owners can only access their own customers, leads, bookings and conversations." },
-  { q: "How is Vantora AI priced?", a: "A one-time setup fee plus a monthly subscription. Plans are shown below. Online payment is not yet connected, so no card is charged — our team activates subscriptions manually." },
+  { q: "How is Eazy’s Business AI priced?", a: "A one-time setup fee plus a monthly subscription. Plans are shown below. Online payment is not yet connected, so no card is charged — our team activates subscriptions manually." },
   { q: "Can I customize the AI assistant?", a: "Yes. Set your business name, services, hours, FAQs, contact details and tone. The assistant answers in your brand's voice." },
   { q: "Are follow-ups permission-based?", a: "Yes. Follow-ups only run when consent is enabled for your business, and every send is logged against the lead." },
 ];
@@ -41,7 +41,7 @@ export default function Home() {
               Every Call. Every Chat.<br /><span className="gold-gradient-text">Every Opportunity.</span>
             </h1>
             <p className="text-base sm:text-lg text-slate-400 leading-relaxed max-w-xl mb-10">
-              Meet Vantora AI, the intelligent business command center that helps you manage conversations, capture leads, schedule appointments, and automate follow-ups—all from one powerful platform.
+              Meet Eazy’s Business AI, the intelligent business command center that helps you manage conversations, capture leads, schedule appointments, and automate follow-ups—all from one powerful platform.
             </p>
             <div className="flex flex-wrap gap-4">
               <Button data-testid="hero-cta-button" onClick={() => navigate("/signup")}
@@ -50,7 +50,7 @@ export default function Home() {
               </Button>
               <Button data-testid="hero-explore-button" variant="outline" onClick={() => document.getElementById("features")?.scrollIntoView({ behavior: "smooth" })}
                 className="border-amber-500/30 text-slate-200 hover:bg-amber-500/10 rounded-full px-8 h-12 text-base bg-transparent">
-                Explore Vantora AI
+                Explore Eazy’s Business AI
               </Button>
             </div>
           </motion.div>

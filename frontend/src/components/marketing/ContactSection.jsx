@@ -39,11 +39,11 @@ export function ContactSection() {
       <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16">
         <motion.div {...fade}>
           <Eyebrow>Contact & Demo</Eyebrow>
-          <h2 className="font-serif text-3xl lg:text-5xl font-medium mb-6">See Vantora AI command your business.</h2>
+          <h2 className="font-serif text-3xl lg:text-5xl font-medium mb-6">See Eazy’s Business AI command your business.</h2>
           <p className="text-slate-400 leading-relaxed max-w-md mb-10">Request a guided walkthrough, or send us a question. Our team reviews every request personally.</p>
           <div className="space-y-4 text-sm text-slate-300">
             <div className="flex items-center gap-3"><CalendarCheck className="w-4 h-4 text-gold" /> 30-minute guided demo of the Console</div>
-            <div className="flex items-center gap-3"><Mail className="w-4 h-4 text-gold" /> hello@vantora.ai</div>
+            <div className="flex items-center gap-3"><Mail className="w-4 h-4 text-gold" /> Contact us using the form</div>
           </div>
         </motion.div>
         <motion.div {...fade} className="lux-card p-8 lg:p-10">

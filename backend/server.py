@@ -988,7 +988,7 @@ async def create_demo_request(body: DemoRequestInput, request: Request):
     label = "Demo request" if body.kind == "demo" else "Contact message"
     await db.notifications.insert_one({
         "notification_id": new_id("ntf"), "channel": "email", "to": "admin@vantora.ai",
-        "subject": f"[Vantora AI] New {label.lower()} from {body.name}",
+        "subject": f"[Eazy’s Business AI] New {label.lower()} from {body.name}",
         "body": f"{body.name} <{body.email}> {('· ' + body.company) if body.company else ''}\n{body.message}",
         "status": "simulated-sent", "related_id": req["request_id"], "created_at": now_utc().isoformat()})
     return {"request_id": req["request_id"], "status": "received", "alert_status": "simulated-sent"}
@@ -1012,7 +1012,7 @@ async def admin_update_demo_request(request_id: str, body: dict, user=Depends(re
 
 @api_router.get("/")
 async def root():
-    return {"message": "Vantora AI API"}
+    return {"message": "Eazy’s Business AI API"}
 
 
 app.include_router(api_router)

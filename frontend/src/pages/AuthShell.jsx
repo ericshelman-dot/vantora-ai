@@ -69,7 +69,7 @@ export function LoginPage() {
   };
 
   return (
-    <Shell title="Welcome back" subtitle="Sign in to the Vantora AI Console.">
+    <Shell title="Welcome back" subtitle="Sign in to the Eazy’s Business AI Console.">
       <form onSubmit={submit} className="space-y-4">
         <div><Label className="text-slate-300">Email</Label>
           <Input data-testid="login-email-input" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="mt-1.5 bg-[#171A21] border-amber-500/20 h-11" placeholder="you@business.com" /></div>

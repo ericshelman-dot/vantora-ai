@@ -16,7 +16,7 @@ export default function Billing() {
 
   return (
     <div>
-      <PageHeader eyebrow="Account" title="Billing & Subscription" desc="Manage your Vantora AI plan. No real payments are processed — billing is simulated until a payment provider is connected." />
+      <PageHeader eyebrow="Account" title="Billing & Subscription" desc="Manage your Eazy’s Business AI plan. No real payments are processed — billing is simulated until a payment provider is connected." />
       <div className="lux-card p-6 mb-8">
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div>

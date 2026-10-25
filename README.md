@@ -1,5 +1,5 @@
-# vantora-ai
-Source code and development resources for Vantora AI.
+# Eazy’s Business AI
+Source code and development resources for Eazy’s Business AI. Registered domain: `eazysbusinessai.com` (connection and production launch pending).
 
 Imported from Emergent's **AI Business Automation → Localbiz 9** workspace on October 24, 2026. This is the business dashboard, lead management, appointments, and website chat application. The separate **Jessica Lead Merge** chat app is not this codebase.
 
