@@ -8,8 +8,6 @@ import uuid
 from pymongo.errors import DuplicateKeyError
 from datetime import datetime, timezone
 
-from emergentintegrations.llm.chat import LlmChat, UserMessage
-
 STATUSES = ["new", "contacted", "qualified", "booked", "closed"]
 LEGACY_STATUS = {"won": "closed", "lost": "closed"}
 CHANNELS = ("email", "sms")
@@ -315,6 +313,8 @@ async def mark_consent_asked(db, biz, session_id):
 
 
 async def summarize(db, api_key, biz, lead_id):
+    from emergentintegrations.llm.chat import LlmChat, UserMessage
+
     bid = biz["business_id"]
     lead = await db.leads.find_one({"lead_id": lead_id, "business_id": bid}, {"_id": 0})
     if not lead:
@@ -344,6 +344,8 @@ async def summarize(db, api_key, biz, lead_id):
 
 
 async def create_draft(db, new_id, api_key, biz, lead_id, channel, kind="marketing"):
+    from emergentintegrations.llm.chat import LlmChat, UserMessage
+
     bid = biz["business_id"]
     lead = await db.leads.find_one({"lead_id": lead_id, "business_id": bid}, {"_id": 0})
     if not lead:

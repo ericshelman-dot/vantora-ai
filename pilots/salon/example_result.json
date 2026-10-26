@@ -1,0 +1,154 @@
+{
+  "mode": "OFFLINE SYNTHETIC \u2014 not a live salon",
+  "verification": "Real engine functions; mocked database; scripted intents; no LLM or HTTP/UI test",
+  "inquiry": "Do you offer a haircut and finish? What does it cost?",
+  "inquiry_permission_question": "May we email you a personal reply about this inquiry? This is only about your question, not marketing. Reply \"yes\" or \"no\".",
+  "marketing_permission_question": "Would you like to receive occasional offers and updates from Fictional Salon \u2014 Offline Pilot by email, by text message, both, or neither? This is optional. Reply \"email\", \"text\", \"both\" or \"no\".",
+  "availability": {
+    "kind": "availability",
+    "facts": "VERIFIED AVAILABILITY for Haircut and Finish on 2026-11-02: 09:00, 09:15, 09:30, 09:45, 10:00, 10:15, 10:30, 10:45 (local time, America/New_York). Nothing is booked yet; to book, the customer must choose a time and give name plus email or phone.",
+    "footer": ""
+  },
+  "booking": {
+    "booking_id": "pilot_bk_033049afed5c",
+    "business_id": "pilot_synthetic_salon",
+    "customer_name": "Alex Sample",
+    "service": "Haircut and Finish",
+    "datetime": "2026-11-02T15:00:00+00:00",
+    "start_utc": "2026-11-02T15:00:00+00:00",
+    "end_utc": "2026-11-02T15:45:00+00:00",
+    "duration_min": 45,
+    "timezone": "America/New_York",
+    "status": "confirmed",
+    "notes": "Booked by AI chat assistant",
+    "source": "ai_chat",
+    "created_at": "2026-10-26T20:32:14+00:00",
+    "chat_session_id": "synthetic_salon_journey",
+    "customer_email": "alex.salon@example.com",
+    "customer_phone": "",
+    "lead_id": "pilot_lead_fa7795b47903",
+    "customer_id": "pilot_cust_be0871a82c93"
+  },
+  "owner_review": {
+    "lead_id": "pilot_lead_fa7795b47903",
+    "business_id": "pilot_synthetic_salon",
+    "name": "Alex Sample",
+    "email": "alex.salon@example.com",
+    "phone": "",
+    "email_norm": "alex.salon@example.com",
+    "phone_norm": "",
+    "email_key": "pilot_synthetic_salon|alex.salon@example.com",
+    "phone_key": null,
+    "source": "website chat",
+    "status": "booked",
+    "notes": "",
+    "summary": "",
+    "service_interests": [
+      "Haircut and Finish"
+    ],
+    "chat_session_ids": [
+      "synthetic_salon_journey"
+    ],
+    "booking_ids": [
+      "pilot_bk_033049afed5c"
+    ],
+    "consent": {
+      "email": {
+        "channel": "email",
+        "granted": false,
+        "text": "Would you like to receive occasional offers and updates from Fictional Salon \u2014 Offline Pilot by email, by text message, both, or neither? This is optional. Reply \"email\", \"text\", \"both\" or \"no\". Answer: \"No thanks\"",
+        "source": "ai chat question",
+        "at": "2026-10-26T20:32:14.919096+00:00"
+      },
+      "sms": {
+        "channel": "sms",
+        "granted": false,
+        "text": "Would you like to receive occasional offers and updates from Fictional Salon \u2014 Offline Pilot by email, by text message, both, or neither? This is optional. Reply \"email\", \"text\", \"both\" or \"no\". Answer: \"No thanks\"",
+        "source": "ai chat question",
+        "at": "2026-10-26T20:32:14.919338+00:00"
+      },
+      "inquiry_reply": {
+        "channel": "inquiry_reply",
+        "granted": true,
+        "text": "May we email you a personal reply about this inquiry? This is only about your question, not marketing. Reply \"yes\" or \"no\". Answer: \"Yes please\"",
+        "source": "ai chat question",
+        "at": "2026-10-26T20:32:14.918401+00:00",
+        "channel_to_use": "email"
+      }
+    },
+    "consent_log": [
+      {
+        "channel": "inquiry_reply",
+        "granted": true,
+        "text": "May we email you a personal reply about this inquiry? This is only about your question, not marketing. Reply \"yes\" or \"no\". Answer: \"Yes please\"",
+        "source": "ai chat question",
+        "at": "2026-10-26T20:32:14.918401+00:00",
+        "channel_to_use": "email"
+      },
+      {
+        "channel": "email",
+        "granted": false,
+        "text": "Would you like to receive occasional offers and updates from Fictional Salon \u2014 Offline Pilot by email, by text message, both, or neither? This is optional. Reply \"email\", \"text\", \"both\" or \"no\". Answer: \"No thanks\"",
+        "source": "ai chat question",
+        "at": "2026-10-26T20:32:14.919096+00:00"
+      },
+      {
+        "channel": "sms",
+        "granted": false,
+        "text": "Would you like to receive occasional offers and updates from Fictional Salon \u2014 Offline Pilot by email, by text message, both, or neither? This is optional. Reply \"email\", \"text\", \"both\" or \"no\". Answer: \"No thanks\"",
+        "source": "ai chat question",
+        "at": "2026-10-26T20:32:14.919338+00:00"
+      }
+    ],
+    "drafts": [
+      {
+        "draft_id": "pilot_owner_reply",
+        "channel": "email",
+        "kind": "inquiry_reply",
+        "status": "approved",
+        "message": "Hi Alex, our fictional demo includes a 45-minute Haircut and Finish. Pricing needs owner review. No real appointment or message has been made.",
+        "created_at": "2026-10-26T20:32:14.921924+00:00",
+        "approved_at": "2026-10-26T20:32:14.922049+00:00",
+        "approved_by": "synthetic-owner@example.com"
+      }
+    ],
+    "follow_ups": [
+      {
+        "id": "pilot_fu_94dc0fb7767b",
+        "channel": "email",
+        "status": "simulated-sent",
+        "simulated": true,
+        "delivered": false,
+        "kind": "booking_confirmation",
+        "sent_at": "2026-10-26T20:32:14+00:00",
+        "message": "[SIMULATED EMAIL \u2014 not delivered] Hi Alex Sample, your Haircut and Finish at Fictional Salon \u2014 Offline Pilot is confirmed for Monday, November 2, 2026 at 10:00 AM. Reference pilot_bk_033049afed5c."
+      },
+      {
+        "id": "pilot_fu_6c7426e1aef5",
+        "channel": "email",
+        "message": "Hi Alex, our fictional demo includes a 45-minute Haircut and Finish. Pricing needs owner review. No real appointment or message has been made.",
+        "status": "simulated-sent",
+        "simulated": true,
+        "delivered": false,
+        "kind": "inquiry_reply",
+        "draft_id": "pilot_owner_reply",
+        "approved_by": "synthetic-owner@example.com",
+        "sent_at": "2026-10-26T20:32:14.922049+00:00",
+        "to": "alex.salon@example.com"
+      }
+    ],
+    "status_history": [
+      {
+        "status": "new",
+        "at": "2026-10-26T20:32:14.917335+00:00",
+        "by": "website chat"
+      }
+    ],
+    "inquiry_date": "2026-10-26T20:32:14.917335+00:00",
+    "last_contact_at": "2026-10-26T20:32:14.921389+00:00",
+    "created_at": "2026-10-26T20:32:14.917335+00:00",
+    "customer_id": "pilot_cust_be0871a82c93"
+  },
+  "live_delivery": false,
+  "external_calendar_connected": false
+}
