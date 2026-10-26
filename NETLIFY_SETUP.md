@@ -29,7 +29,7 @@ The pre-existing production administrator session still works. Both workflows we
 
 ## Custom domain
 
-Both `eazysbusinessai.com` (primary) and `www.eazysbusinessai.com` (redirect to primary) are attached to this Netlify project. Netlify reports Pending DNS verification; a custom-domain HTTPS certificate cannot be provisioned until DNS points to Netlify.
+Both `eazysbusinessai.com` (primary) and `www.eazysbusinessai.com` (redirect to primary) are attached to this Netlify project. The approved DNS changes have been saved, and Netlify has reported successful DNS verification. Its free HTTPS certificate is provisioning; final strict TLS verification remains pending.
 
 The exact external-DNS targets shown by Netlify are:
 
@@ -40,4 +40,4 @@ The exact external-DNS targets shown by Netlify are:
 
 Netlify also offers an ALIAS/ANAME apex target `apex-loadbalancer.netlify.com` for providers that support it. Use the A fallback above if the current provider does not support apex ALIAS records. Do not set an ordinary CNAME at the apex alongside existing email records.
 
-The owner explicitly approved GoDaddy website-DNS edits. All 19 current DNS records were backed up before editing. GoDaddy's identity-verification process stalled after an owner-provided SMS code was submitted, and its recovery route requires a fresh user sign-in. No completed DNS save has been confirmed; public apex records still return 15.197.148.33 and 3.33.130.190. The DNS task remains pending that sign-in. After it completes, update only the two approved website records, compare all remaining MX/TXT/DKIM/SRV/NS records against the backup, then verify propagation and HTTPS. Do not transfer nameservers or buy email/hosting add-ons. The verification code is not stored in project files.
+The owner explicitly approved GoDaddy website-DNS edits. All 19 DNS records were backed up before editing. After GoDaddy's separate identity confirmations for each edit, both website records were saved and verified in the DNS table. The other 17 records exactly match the normalized before/after inventory, including MX/TXT/DKIM/SRV/NS and autodiscovery records. Public resolvers 1.1.1.1 and 8.8.8.8 now return 75.2.60.5 for the root; 1.1.1.1 returns the new www CNAME. Some local resolvers still return the earlier parked targets while their caches expire. Nameservers, email settings and paid services were not changed. Verification codes are not stored in project files.

@@ -10,16 +10,12 @@ No domain email inbox is assumed to exist. Public contact and policy pages use t
 
 ## Connection status
 
-Public DNS returned nameservers ns49.domaincontrol.com and ns50.domaincontrol.com on October 25, 2026. The apex returned A records 15.197.148.33 and 3.33.130.190. These are observations, not recommended target records. No DNS record, registrar setting, production secret or domain binding was changed.
+The owner chose Netlify for the frontend and approved retaining the existing Emergent backend. The frontend is deployed at https://eazys-business-ai.netlify.app. Both eazysbusinessai.com and www.eazysbusinessai.com are attached to that Netlify project. The approved backend update was released through Emergent's free republish flow.
 
-The new branding is staged in the existing development preview and draft pull request. It has not been published to production or verified on the new domain.
+After owner approval and GoDaddy identity verification, the root A record was changed from Parked to 75.2.60.5 and the www CNAME from eazysbusinessai.com to eazys-business-ai.netlify.app. GoDaddy confirmed each save. Cloudflare and Google public DNS now return the new root target. The other 17 DNS records were compared with the backup and remain unchanged, including Microsoft 365 MX, SPF, DKIM, DMARC, SRV and autodiscovery records. Nameservers remain ns49.domaincontrol.com and ns50.domaincontrol.com.
 
-## Steps after owner approval
+## Final verification
 
-1. In the existing Localbiz 9 deployment's Custom Domain flow, enter eazysbusinessai.com and obtain the exact platform-provided verification and routing records. Do not reuse the currently observed IP addresses or guess Emergent's targets.
-2. Review existing DNS records and export a backup. Preserve email-related MX/TXT records and unrelated hostnames. Apply only the approved records required for this deployment.
-3. Add www.eazysbusinessai.com only if desired, and configure a single primary host after checking platform support. Do not assume root and www are automatically configured together.
-4. Verify domain ownership and HTTPS. Review the backend URL, credentialed CORS settings, cookies and Google sign-in allowed origins/redirects for the final host without changing existing login identities or passwords.
-5. Publish the reviewed build only after explicit production-publish approval. Verify homepage, login, administrator access, both sales workflows, chat widget and policy links over HTTPS on the new host. Use isolated fictional data for any write checks.
+Netlify has reported successful DNS verification and is provisioning the free HTTPS certificate. Certificate verification and final custom-host checks must pass before claiming that the secure custom domain is live. Some local resolvers still cache the old parked records. Keep TLS verification enabled; do not bypass a browser certificate warning. See NETLIFY_SETUP.md for current launch status and verified behavior.
 
-Domain connection and production publishing remain pending. Registering a domain does not create email inboxes or authorize customer-data integrations.
+Domain registration and DNS changes do not create email inboxes or authorize customer-data integrations. No new customer account, paid model call, calendar connection, message delivery or payment was authorized by the hosting setup.
