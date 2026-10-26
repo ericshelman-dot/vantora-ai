@@ -38,7 +38,7 @@ export default function SalesPilot() {
     setData(null); setSelected(null); setForm(blank); setError("");
     setSetup({ business_name: "", owner_name: "", services: "", timezone: "America/New_York", consent_evidence: "", owner_consented: false });
     api.get(`/sales-pilot?${query}`).then(({ data: next }) => { if (active) setData(next); })
-      .catch(e => { if (active) setError(e.response?.data?.detail || "Could not load workspace."); });
+      .catch(e => { if (active) setError(e.response?.status === 404 ? "This server needs the latest sales-workflow update before this workspace can open. Your existing leads and appointments are still available from the sidebar." : e.response?.data?.detail || "Could not load workspace."); });
     return () => { active = false; };
   }, [mode, workflow]);
   const p = data?.prospects.find(x => x.prospect_id === selected);

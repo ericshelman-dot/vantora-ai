@@ -1,0 +1,14 @@
+[build]
+  base = "frontend"
+  command = "npm run build"
+  publish = "build"
+
+[build.environment]
+  NODE_VERSION = "22"
+  YARN_VERSION = "1.22.22"
+  REACT_APP_BACKEND_URL = ""
+  DISABLE_VISUAL_EDITS = "true"
+  DISABLE_EMERGENT_OVERLAY = "true"
+
+# Routing and headers live in frontend/public so both Git builds and
+# uploads of the already-built site use the same settings.

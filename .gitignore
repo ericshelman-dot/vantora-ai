@@ -68,6 +68,7 @@ chainlit.md
 
 # Deployment
 .vercel
+.netlify/
 
 # Data and databases
 agenthub/agents/youtube/db

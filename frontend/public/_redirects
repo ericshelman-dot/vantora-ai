@@ -1,0 +1,3 @@
+# Preserve the current production API and all tenant data.
+/api/*  https://localbiz-9.emergent.host/api/:splat  200!
+/*      /index.html                              200
