@@ -21,9 +21,11 @@ The branded homepage, login route and nested dashboard route return the SPA succ
 
 No new user was registered, no stored customer data was modified, no outbound message or model call was made, and no calendar or payment action was performed. Existing-credential login, Google OAuth and paid chat generation were not exercised. The Netlify proxy has a documented response timeout, so long-running chat streams require additional end-to-end verification before claiming full compatibility.
 
-## Backend release gap
+## Backend release
 
-The current production backend is the earlier release: `/api/` identifies Vantora AI and `/api/sales-pilot` returns 404. The new dual-workflow backend is built and tested in the existing Emergent development preview, not released to that production host. Netlify therefore serves the renamed frontend, while the Sales & Marketing page explains that the server needs its workflow update. Do not point production users at the development backend to conceal this gap. Publishing the prepared backend remains a separate owner-approved production step; retain the existing database and secrets.
+After explicit owner approval, the prepared backend was republished through Emergent's free republish flow. The platform lists the 2nd publish as `d484c1f`. Production `/api/` now identifies Eazy’s Business AI; both workflow routes exist and require authentication, including through the Netlify proxy. The earlier 404 release gap is resolved.
+
+The pre-existing production administrator session still works. Both workflows were exercised in production using only one new fictional sales prospect and one new fictional customer inquiry in the isolated demo collection; their distinct free drafts were verified. Existing administrator totals remain 23 businesses, 1 active subscription, 21 trialing and $299 estimated MRR. The original demo still has 86 leads and 9 bookings. No existing customer records, calendar events, outbound messages, paid model calls or payments were changed or created by verification. Existing hosting remains on its prior 50-credits/month configuration; the republish control explicitly stated free republishes and no upgrade was selected.
 
 ## Custom domain
 
@@ -38,4 +40,4 @@ The exact external-DNS targets shown by Netlify are:
 
 Netlify also offers an ALIAS/ANAME apex target `apex-loadbalancer.netlify.com` for providers that support it. Use the A fallback above if the current provider does not support apex ALIAS records. Do not set an ordinary CNAME at the apex alongside existing email records.
 
-No GoDaddy account was accessed or registrar DNS changed by this task. Existing public apex records still return 15.197.148.33 and 3.33.130.190. Before changing them, obtain explicit owner authorization, review/back up the zone, update only website routing, preserve MX/TXT and all unrelated records, then verify propagation and HTTPS. Do not transfer nameservers or buy email/hosting add-ons. Backend release, registrar access and any additional charge remain subject to the owner's existing explicit-approval boundary.
+The owner explicitly approved GoDaddy website-DNS edits. All 19 current DNS records were backed up before editing. GoDaddy's identity-verification process stalled after an owner-provided SMS code was submitted, and its recovery route requires a fresh user sign-in. No completed DNS save has been confirmed; public apex records still return 15.197.148.33 and 3.33.130.190. The DNS task remains pending that sign-in. After it completes, update only the two approved website records, compare all remaining MX/TXT/DKIM/SRV/NS records against the backup, then verify propagation and HTTPS. Do not transfer nameservers or buy email/hosting add-ons. The verification code is not stored in project files.
