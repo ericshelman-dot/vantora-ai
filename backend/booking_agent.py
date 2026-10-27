@@ -6,8 +6,6 @@ import uuid
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 
-from emergentintegrations.llm.chat import LlmChat, UserMessage
-
 import scheduling as sch
 
 PLANNER_MODEL = ("gemini", "gemini-3-flash-preview")
@@ -15,6 +13,8 @@ CLAIM_RE = re.compile(r"\b(is|are|has been|have been|you're|you are|i've|i have|
 
 
 async def plan(api_key, biz, history, message):
+    from emergentintegrations.llm.chat import LlmChat, UserMessage
+
     cfg = sch.config(biz)
     now = datetime.now(ZoneInfo(cfg["timezone"]))
     days = ", ".join((now + timedelta(days=i)).strftime("%a %Y-%m-%d") for i in range(14))
@@ -102,18 +102,20 @@ async def execute(db, new_id, biz, p, session_id):
         alts = await sch.alternatives(db, biz, date, duration, around_utc=start)
         return {"kind": "outside_hours", "facts": f"{date} {time_} is outside business hours for a {duration}-minute {service or 'service'}. Available alternatives: {_fmt_alts(biz, alts)}. No appointment was created.",
                 "footer": "\n\nNo appointment was created for that time."}
-    if not await sch.is_free(db, biz, start, end):
+    # A retry must find its saved reservation before its own slot is counted as full.
+    existing = await db.bookings.find_one({"business_id": biz["business_id"], "chat_session_id": session_id, "start_utc": sch.iso(start),
+                                           "service": service, **sch.ACTIVE}, {"_id": 0})
+    if not existing and not await sch.is_free(db, biz, start, end):
         alts = await sch.alternatives(db, biz, date, duration, around_utc=start)
         return {"kind": "unavailable", "facts": f"{sch.describe(biz, start)} is fully booked. Available alternatives: {_fmt_alts(biz, alts)}. No appointment was created.",
                 "footer": "\n\nNo appointment was created for that time."}
     missing = [k for k, v in (("service", service), ("name", p.get("name"))) if not v]
-    if not (p.get("email") or p.get("phone")):
+    import leads_engine
+    if not (leads_engine.norm_email(p.get("email")) or leads_engine.norm_phone(p.get("phone"))):
         missing.append("email or phone number")
     if missing:
         return {"kind": "missing", "facts": f"{sch.describe(biz, start)} is currently AVAILABLE but NOT booked. To book, still need: {', '.join(missing)}. Ask for them.", "footer": ""}
 
-    existing = await db.bookings.find_one({"business_id": biz["business_id"], "chat_session_id": session_id, "start_utc": sch.iso(start),
-                                           "service": service, **sch.ACTIVE}, {"_id": 0})
     if existing:
         booking = existing
     else:

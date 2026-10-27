@@ -1,0 +1,25 @@
+{
+  "business_id": "pilot_synthetic_salon",
+  "name": "Fictional Salon — Offline Pilot",
+  "industry": "Hair salon (synthetic demonstration)",
+  "is_demo": true,
+  "services": "Haircut and Finish (45 minutes); Blowout (30 minutes); Color Consultation (30 minutes). Fictional examples only; no actual salon prices supplied.",
+  "hours": "Synthetic schedule: Monday–Friday 09:00–17:00; Saturday and Sunday closed.",
+  "faqs": "All data is fictional. No real salon calendar is connected. Prices, stylist assignment, color treatment suitability and deposits require owner review.",
+  "address": "",
+  "phone": "",
+  "ai_tone": "Warm, concise, transparent about simulation",
+  "ai_greeting": "Welcome to the fictional salon demonstration. No real appointments or messages will be made.",
+  "chat_enabled": true,
+  "phone_reception_enabled": false,
+  "follow_up_consent": false,
+  "service_catalog": [
+    {"name": "Haircut and Finish", "duration_min": 45, "price": "Owner review required"},
+    {"name": "Blowout", "duration_min": 30, "price": "Owner review required"},
+    {"name": "Color Consultation", "duration_min": 30, "price": "Owner review required"}
+  ],
+  "scheduling": {
+    "timezone": "America/New_York", "capacity": 1, "slot_minutes": 15, "default_duration": 45,
+    "weekly": {"mon": ["09:00", "17:00"], "tue": ["09:00", "17:00"], "wed": ["09:00", "17:00"], "thu": ["09:00", "17:00"], "fri": ["09:00", "17:00"], "sat": null, "sun": null}
+  }
+}

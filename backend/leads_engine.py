@@ -8,8 +8,6 @@ import uuid
 from pymongo.errors import DuplicateKeyError
 from datetime import datetime, timezone
 
-from emergentintegrations.llm.chat import LlmChat, UserMessage
-
 STATUSES = ["new", "contacted", "qualified", "booked", "closed"]
 LEGACY_STATUS = {"won": "closed", "lost": "closed"}
 CHANNELS = ("email", "sms")
@@ -20,7 +18,14 @@ PHONE_FIND = re.compile(r"\+?\d[\d\s().-]{7,}\d")
 _NM = r"([A-Z][a-zA-Z'-]+(?:\s+[A-Z][a-zA-Z'-]+)?)"
 NAME_FINDS = [re.compile(r"(?i:my name is|my name's|i am|i'm|this is|it's|name\s*[:\-])\s*" + _NM),
               re.compile(r"(?:^|[.!?,]\s*)" + _NM + r"\s+(?i:here)\b")]
-OPT_OUT = re.compile(r"\b(unsubscribe|opt[ -]?out|stop (?:texting|messaging|emailing|sending)|no more (?:emails|texts|messages))\b", re.I)
+# Bare STOP must occupy the whole message, not match "Can I stop by?".
+# Keep the existing explicit withdrawal phrases; allow case, whitespace and
+# sentence-ending punctuation around the standalone command.
+OPT_OUT = re.compile(
+    r"\A\s*stop[.!?]*\s*\Z|"
+    r"\b(unsubscribe|opt[ -]?out|stop (?:texting|messaging|emailing|sending)|no more (?:emails|texts|messages))\b",
+    re.I,
+)
 CHECKBOX_TEXT = {"email": "Yes, send me occasional offers and updates by email (optional).",
                  "sms": "Yes, send me occasional offers and updates by text message (optional)."}
 SUMMARY_MODEL = ("gemini", "gemini-3-flash-preview")
@@ -243,16 +248,20 @@ async def _apply_pending_consent(db, bid, lead_id, session_id):
 async def handle_chat_consent(db, biz, session_id, message, checkbox):
     """Process widget checkboxes (only checked = consent), replies to our consent question, and opt-outs."""
     bid = biz["business_id"]
+    if OPT_OUT.search(message or ""):
+        # Withdrawal wins over checked boxes in the same request. Close any
+        # pending marketing question so a later reply cannot undo this decision.
+        await db.chat_sessions.update_one({"business_id": bid, "session_id": session_id},
+                                          {"$set": {"consent_answered_at": now()}}, upsert=True)
+        for ch in CHANNELS:
+            await stage_consent(db, bid, session_id, ch, False, f"Customer message: \"{message[:200]}\"", "chat opt-out")
+        return "opted_out"
     st = await session_state(db, bid, session_id)
     lead = await db.leads.find_one({"business_id": bid, "chat_session_ids": session_id, "archived": {"$ne": True}}, {"_id": 0, "consent": 1})
     for ch in CHANNELS:
         current = ((lead or {}).get("consent") or {}).get(ch) or (st.get("pending_consent") or {}).get(ch)
         if (checkbox or {}).get(ch) is True and not current:
             await stage_consent(db, bid, session_id, ch, True, CHECKBOX_TEXT[ch], "chat widget checkbox")
-    if OPT_OUT.search(message or ""):
-        for ch in CHANNELS:
-            await stage_consent(db, bid, session_id, ch, False, f"Customer message: \"{message[:200]}\"", "chat opt-out")
-        return "opted_out"
     if st.get("inquiry_prompted_at") and not st.get("inquiry_answered_at"):
         await db.chat_sessions.update_one({"business_id": bid, "session_id": session_id}, {"$set": {"inquiry_answered_at": now()}})
         yn = parse_yes_no(message)
@@ -315,6 +324,8 @@ async def mark_consent_asked(db, biz, session_id):
 
 
 async def summarize(db, api_key, biz, lead_id):
+    from emergentintegrations.llm.chat import LlmChat, UserMessage
+
     bid = biz["business_id"]
     lead = await db.leads.find_one({"lead_id": lead_id, "business_id": bid}, {"_id": 0})
     if not lead:
@@ -344,6 +355,8 @@ async def summarize(db, api_key, biz, lead_id):
 
 
 async def create_draft(db, new_id, api_key, biz, lead_id, channel, kind="marketing"):
+    from emergentintegrations.llm.chat import LlmChat, UserMessage
+
     bid = biz["business_id"]
     lead = await db.leads.find_one({"lead_id": lead_id, "business_id": bid}, {"_id": 0})
     if not lead:
@@ -395,9 +408,18 @@ async def approve_draft(db, new_id, bid, lead_id, draft_id, approver, message=No
     entry = {"id": new_id("fu"), "channel": ch, "message": body, "status": "simulated-sent", "simulated": True, "delivered": False,
              "kind": kind, "draft_id": draft_id, "approved_by": approver, "sent_at": ts,
              "to": lead.get("email") if ch == "email" else lead.get("phone")}
-    await db.leads.update_one(
-        {"lead_id": lead_id, "business_id": bid, "drafts.draft_id": draft_id},
+    # Consent and pending state must still match when the simulated follow-up is
+    # saved. A prior read alone misses withdrawals or competing approvals.
+    consent_key = INQUIRY if kind == INQUIRY else ch
+    result = await db.leads.update_one(
+        {"lead_id": lead_id, "business_id": bid, "archived": {"$ne": True},
+         f"consent.{consent_key}": consent[consent_key],
+         "drafts": {"$elemMatch": {"draft_id": draft_id, "status": "pending",
+                                   "channel": ch, "message": draft["message"]}}},
         {"$set": {"drafts.$.status": "approved", "drafts.$.message": body, "drafts.$.approved_at": ts, "drafts.$.approved_by": approver,
                   "status": "contacted" if lead.get("status") == "new" else lead.get("status")},
          "$push": {"follow_ups": entry}})
+    if not result.matched_count:
+        raise LeadError("Consent, lead or draft changed during approval. Review it again. Nothing was sent.", 409)
     return entry
+
