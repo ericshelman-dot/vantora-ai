@@ -28,7 +28,7 @@ export function HeroConsole() {
     <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.15 }} className="relative min-w-0" data-testid="hero-console-preview">
       <div className="lux-card p-6 gold-glow">
         <div className="flex items-center justify-between mb-6">
-          <span className="text-[11px] uppercase tracking-[0.28em] text-slate-500">Vantora AI Console</span>
+          <span className="text-[11px] uppercase tracking-[0.28em] text-slate-500">Eazy’s Business AI Console</span>
           <span className="flex items-center gap-1.5 text-xs text-emerald-400"><span className="w-2 h-2 rounded-full bg-emerald-500 pulse-live" />AI Online</span>
         </div>
         <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-6">
@@ -87,7 +87,7 @@ const capabilities = [
   { icon: MessageSquare, title: "AI Website Chat", status: "Live", desc: "An embeddable assistant that answers from your services, hours and FAQs — and remembers the conversation.", points: ["One-line install on any website", "Trained on your business details", "Every chat saved to your console"] },
   { icon: CalendarCheck, title: "Smart Appointment Scheduling", status: "Live", desc: "Create, confirm and manage appointments in one calendar view built for busy teams.", points: ["Booking status at a glance", "Customer notes on every visit", "External calendar sync in development"] },
   { icon: Send, title: "Automated Lead Follow-Ups", status: "Simulated", desc: "Permission-based email and SMS follow-ups, with AI-drafted messages that sound like you.", points: ["Consent-aware by default", "AI-written drafts", "Sends logged, not yet delivered"] },
-  { icon: LayoutDashboard, title: "Business Owner Dashboard", status: "Live", desc: "The Vantora AI Console brings conversations, leads, bookings and customers into one refined view.", points: ["Performance overview", "Customer and lead records", "Assistant customization"] },
+  { icon: LayoutDashboard, title: "Business Owner Dashboard", status: "Live", desc: "The Eazy’s Business AI Console brings conversations, leads, bookings and customers into one refined view.", points: ["Performance overview", "Customer and lead records", "Assistant customization"] },
 ];
 
 export function Capabilities() {

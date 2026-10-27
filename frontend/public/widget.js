@@ -29,7 +29,7 @@
   var box = document.createElement("div");
   box.className = "lbz-box";
   box.innerHTML =
-    '<div class="lbz-hd">Assistant<div style="font-size:10px;letter-spacing:.2em;color:#89919E;font-weight:500;margin-top:4px">POWERED BY VANTORA AI</div></div><div class="lbz-msgs"><div class="lbz-m lbz-a">Hi! How can I help you today?</div></div>' +
+    '<div class="lbz-hd">Assistant<div style="font-size:10px;letter-spacing:.2em;color:#89919E;font-weight:500;margin-top:4px">POWERED BY EAZY’S BUSINESS AI</div></div><div class="lbz-msgs"><div class="lbz-m lbz-a">Hi! How can I help you today?</div></div>' +
     '<div class="lbz-in"><input placeholder="Type a message..."/><button>Send</button></div>' +
     '<div class="lbz-cs"><label><input type="checkbox" data-consent="email"/> Email me offers &amp; updates</label><label><input type="checkbox" data-consent="sms"/> Text me offers &amp; updates</label><span>(optional)</span></div>';
 

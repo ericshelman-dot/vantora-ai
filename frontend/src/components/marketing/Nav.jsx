@@ -84,7 +84,7 @@ export function Footer() {
           </ul>
         </div>
       </div>
-      <div className="border-t border-amber-500/10 py-6 text-center text-xs text-slate-500 font-mono">© 2026 Vantora AI. Your Business. Always Ahead.</div>
+      <div className="border-t border-amber-500/10 py-6 text-center text-xs text-slate-500 font-mono">© 2026 Eazy’s Business AI. Your Business. Always Ahead.</div>
     </footer>
   );
 }

@@ -20,6 +20,7 @@ import Customization from "@/dashboard/Customization";
 import Billing from "@/dashboard/Billing";
 import Settings from "@/dashboard/Settings";
 import AdminDashboard from "@/admin/AdminDashboard";
+import SalesPilot from "@/dashboard/SalesPilot";
 
 function Protected({ children, adminOnly }) {
   const { user, loading } = useAuth();
@@ -45,6 +46,7 @@ function AppRouter() {
         <Route path="phone" element={<PhoneReception />} />
         <Route path="chat" element={<ChatAssistant />} />
         <Route path="leads" element={<Leads />} />
+        <Route path="sales" element={<SalesPilot />} />
         <Route path="appointments" element={<Appointments />} />
         <Route path="customers" element={<Customers />} />
         <Route path="customization" element={<Customization />} />

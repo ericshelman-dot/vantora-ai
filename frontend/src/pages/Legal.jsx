@@ -23,7 +23,7 @@ function LegalShell({ title, children }) {
 export function PrivacyPage() {
   return (
     <LegalShell title="Privacy Policy">
-      <p>Vantora AI ("we") provides an AI business assistant platform. This policy explains how we collect, use, and protect information when you use our services.</p>
+      <p>Eazy’s Business AI ("we") provides an AI business assistant platform. This policy explains how we collect, use, and protect information when you use our services.</p>
       <h3 className="font-display text-xl text-amber-100">Information We Collect</h3>
       <p>We collect account details (name, email, business information) and the interaction data you generate — calls, chats, leads, bookings, and customer records. Each business operates in an isolated, multi-tenant workspace.</p>
       <h3 className="font-display text-xl text-amber-100">How We Use Data</h3>
@@ -31,7 +31,7 @@ export function PrivacyPage() {
       <h3 className="font-display text-xl text-amber-100">Follow-up Communications</h3>
       <p>Email and SMS follow-ups are permission-based and only triggered when you enable consent for your business. In the current demo, all sends are simulated and logged.</p>
       <h3 className="font-display text-xl text-amber-100">Security</h3>
-      <p>We employ encryption and strict tenant separation so only you can access your workspace. Contact us at privacy@vantora.ai for any requests.</p>
+      <p>We employ encryption and strict tenant separation so only you can access your workspace. Use the contact form on our homepage for privacy requests.</p>
     </LegalShell>
   );
 }
@@ -39,7 +39,7 @@ export function PrivacyPage() {
 export function TermsPage() {
   return (
     <LegalShell title="Terms of Service">
-      <p>By accessing Vantora AI, you agree to these terms. The service is provided to local businesses as a subscription product with a one-time setup fee plus recurring monthly billing.</p>
+      <p>By accessing Eazy’s Business AI, you agree to these terms. The service is provided to local businesses as a subscription product with a one-time setup fee plus recurring monthly billing.</p>
       <h3 className="font-display text-xl text-amber-100">Subscriptions & Billing</h3>
       <p>Plans include a setup fee and monthly subscription. Pricing is managed by the platform administrator and may be updated. In this demo, payments are not processed.</p>
       <h3 className="font-display text-xl text-amber-100">Acceptable Use</h3>
@@ -47,7 +47,7 @@ export function TermsPage() {
       <h3 className="font-display text-xl text-amber-100">Service Availability</h3>
       <p>We strive for high availability. Certain features such as AI phone reception and SMS/email delivery are simulated in this demo environment and clearly labeled.</p>
       <h3 className="font-display text-xl text-amber-100">Liability</h3>
-      <p>The service is provided "as is." Contact legal@vantora.ai with questions about these terms.</p>
+      <p>The service is provided "as is." Use the contact form on our homepage with questions about these terms.</p>
     </LegalShell>
   );
 }
