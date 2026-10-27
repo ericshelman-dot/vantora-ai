@@ -408,10 +408,18 @@ async def approve_draft(db, new_id, bid, lead_id, draft_id, approver, message=No
     entry = {"id": new_id("fu"), "channel": ch, "message": body, "status": "simulated-sent", "simulated": True, "delivered": False,
              "kind": kind, "draft_id": draft_id, "approved_by": approver, "sent_at": ts,
              "to": lead.get("email") if ch == "email" else lead.get("phone")}
-    await db.leads.update_one(
-        {"lead_id": lead_id, "business_id": bid, "drafts.draft_id": draft_id},
+    # Consent and pending state must still match when the simulated follow-up is
+    # saved. A prior read alone misses withdrawals or competing approvals.
+    consent_key = INQUIRY if kind == INQUIRY else ch
+    result = await db.leads.update_one(
+        {"lead_id": lead_id, "business_id": bid, "archived": {"$ne": True},
+         f"consent.{consent_key}": consent[consent_key],
+         "drafts": {"$elemMatch": {"draft_id": draft_id, "status": "pending",
+                                   "channel": ch, "message": draft["message"]}}},
         {"$set": {"drafts.$.status": "approved", "drafts.$.message": body, "drafts.$.approved_at": ts, "drafts.$.approved_by": approver,
                   "status": "contacted" if lead.get("status") == "new" else lead.get("status")},
          "$push": {"follow_ups": entry}})
+    if not result.matched_count:
+        raise LeadError("Consent, lead or draft changed during approval. Review it again. Nothing was sent.", 409)
     return entry
 

@@ -91,3 +91,9 @@ This branch is unmerged and undeployed. Discard it to abandon the pilot, or reve
 ## Branch review — October 27, 2026
 
 PR #4 targets `feature/salon-sales-pilot` (PR #3), not main. Its original head was one commit ahead and zero behind PR #3 at `02022a8e9012ad0229ee34fd39853c138a23397d`. This correction stays on `pilot/isolated-salon-validation`. Keep both PRs draft pending their broader review. Recommended order: review/merge #3 first, then retarget #4 to main and inspect the resulting diff and rerun isolated checks (especially after squash/rebase). Do not merge #4 into main wholesale without reviewing its inherited #3 changes. Neither a merge nor deployment was performed for this correction.
+
+## Draft approval race repair — October 27, 2026
+
+Draft approval now atomically requires the same consent record, an active lead and a still-pending draft when saving the simulated follow-up. A withdrawal, competing approval or archival between read and write produces HTTP 409 through the existing LeadError handler and no follow-up entry. This closes the read/write gap for both marketing and inquiry approval; repeat approval remains rejected. All delivery remains simulated.
+
+Validation: the isolated command above passed 90 tests, no expected failures, with one dependency deprecation warning. Seven added checks cover intervening withdrawal/approval/archival for both purposes and retry without duplicate follow-up. These use a controlled interleaving against the in-memory database, not a live MongoDB concurrency test. No provider integration, deployment or merge. Purpose/session-scoped inquiry withdrawal, durable outbox, authenticated provider callbacks and send-time suppression remain separate work.

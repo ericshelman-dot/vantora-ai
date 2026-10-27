@@ -1,5 +1,6 @@
 """Offline withdrawal regressions; fictional records and no external connections."""
 import copy
+from types import SimpleNamespace
 
 import pytest
 from test_salon import no_external_connections, run
@@ -66,4 +67,52 @@ def test_stop_before_capture_survives_stale_prompt_and_business_isolation():
         assert len(saved["consent_log"]) == 2
         assert await db.leads.find({"business_id": other["business_id"]}).to_list(10) == before_leads
         assert await db.chat_sessions.find({"business_id": other["business_id"]}).to_list(10) == before_sessions
+    run(check())
+
+
+@pytest.mark.parametrize('kind', ['marketing', le.INQUIRY])
+@pytest.mark.parametrize('change', ['withdraw', 'approve', 'archive'])
+def test_approval_rechecks_permission_and_pending_state(monkeypatch, kind, change):
+    async def check():
+        db, biz = make_db(), business()
+        lead = await le.upsert_lead(db, new_id, biz, name='Alex Sample', email='alex@example.com', session_id='s')
+        channel = le.INQUIRY if kind == le.INQUIRY else 'email'
+        await le.record_consent(db, biz['business_id'], lead['lead_id'], channel, True, 'explicit permission', 'test', channel_to_use='email')
+        await db.leads.update_one({'lead_id': lead['lead_id']}, {'$push': {'drafts': {
+            'draft_id': 'race', 'channel': 'email', 'kind': kind, 'status': 'pending', 'message': 'Fictional reply'}}})
+        collection = db.leads
+        original_update = collection.update_one
+        async def intervening_update(query, update, *args, **kwargs):
+            if 'follow_ups' in update.get('$push', {}):
+                field, value = {
+                    'withdraw': (f'consent.{channel}.granted', False),
+                    'approve': ('drafts.0.status', 'approved'),
+                    'archive': ('archived', True),
+                }[change]
+                await original_update({'lead_id': lead['lead_id']}, {'$set': {field: value}})
+            return await original_update(query, update, *args, **kwargs)
+        monkeypatch.setattr(collection, 'update_one', intervening_update)
+        with pytest.raises(le.LeadError) as exc:
+            await le.approve_draft(SimpleNamespace(leads=collection), new_id, biz['business_id'], lead['lead_id'], 'race', 'fictional-owner')
+        assert exc.value.code == 409
+        saved = await db.leads.find_one({'lead_id': lead['lead_id']})
+        assert saved['follow_ups'] == []
+        if change != 'approve':
+            assert saved['drafts'][0]['status'] == 'pending'
+    run(check())
+
+
+def test_approval_retry_logs_only_one_simulated_follow_up():
+    async def check():
+        db, biz = make_db(), business()
+        lead = await le.upsert_lead(db, new_id, biz, name='Alex Sample', email='alex@example.com', session_id='s')
+        await le.record_consent(db, biz['business_id'], lead['lead_id'], 'email', True, 'explicit permission', 'test')
+        await db.leads.update_one({'lead_id': lead['lead_id']}, {'$push': {'drafts': {
+            'draft_id': 'once', 'channel': 'email', 'kind': 'marketing', 'status': 'pending', 'message': 'Fictional offer'}}})
+        first = await le.approve_draft(db, new_id, biz['business_id'], lead['lead_id'], 'once', 'fictional-owner')
+        assert first['simulated'] is True and first['delivered'] is False
+        with pytest.raises(le.LeadError):
+            await le.approve_draft(db, new_id, biz['business_id'], lead['lead_id'], 'once', 'fictional-owner')
+        saved = await db.leads.find_one({'lead_id': lead['lead_id']})
+        assert len(saved['follow_ups']) == 1
     run(check())

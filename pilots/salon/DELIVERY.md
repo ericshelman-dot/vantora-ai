@@ -44,3 +44,7 @@ Illustrative SMS calculation only: 100 outbound one-segment confirmations = $0.8
 
 These describe available provider capabilities. The durable worker/outbox, consent changes, security controls and failure UI above are proposed Vantora work, not already implemented integrations.
 
+
+## Implemented offline approval safeguard — October 27
+
+The existing simulated draft approval now checks unchanged consent, active lead and pending draft atomically with its database update. This prevents a withdrawal or competing approval between read and write from producing a simulated follow-up. This is not an outbox worker, provider suppression integration, or inquiry-withdrawal UI. Live messaging remains disabled.
