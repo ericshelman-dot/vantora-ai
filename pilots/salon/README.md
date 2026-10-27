@@ -15,7 +15,7 @@ From the repository root, preferably inside a Python 3.12 virtual environment:
 ```sh
 python -m pip install -r pilots/salon/requirements.txt
 python pilots/salon/run_demo.py
-python -m pytest -c /dev/null pilots/salon/test_salon.py backend/tests/test_sales_pilot.py -q
+python -m pytest -c /dev/null pilots/salon/test_salon.py pilots/salon/test_opt_out.py backend/tests/test_sales_pilot.py backend/tests/test_consent_parser_iter8.py -q
 ```
 
 On Windows use `-c NUL` instead of `-c /dev/null`. The engine's existing Unix-style `strftime` directives (`%-d`, `%-I`) still require a portability check on native Windows; WSL is the known-compatible path for this Linux-tested runner.
@@ -56,11 +56,13 @@ Inquiry wording and intended assistant response are a walkthrough script, not a 
 ## Executed verification
 
 - Python 3.12; pytest 9.1.1; mongomock-motor 0.0.36; pymongo 4.18.2; motor 3.7.1; FastAPI 0.110.1; httpx 0.27.2.
-- **30 passed, 1 expected failure**: 17 passing salon checks plus 13 existing sales-pilot API checks. One dependency deprecation warning, not a functional failure.
+- Original October 26 report: **30 passed, 1 expected failure**: 17 passing salon checks plus 13 existing sales-pilot API checks. One dependency deprecation warning, not a functional failure.
 - Existing booking execution logic reproduced **two failures**: retry returned `unavailable`; malformed contact returned `confirmed`. With the two fixes both pass. Baseline comparison deferred only the SDK import so it could execute offline.
 - Tested journey, deduplication, tenant preservation with a synthetic sentinel, separate consent scopes, unanswered consent, marketing opt-out, invalid/missing contact, unknown service, outside hours, past/invalid date, planner-error result, storage failure, conflict alternatives, closed day, single-process competing reservations and winter/summer timezone conversion.
 - Existing sales-pilot tests exercise its in-process FastAPI router with a fake store. They do not verify the full server or browser.
-- Strict expected-failure test documents bare `STOP` not recognized by the original chat opt-out regex. It is a known unresolved gap, not a passing test.
+- October 27 STOP correction: **83 passed, no expected failures**, executed locally with the command above (one dependency deprecation warning). The former strict expected failure is now a normal passing regression. Against the unchanged parser/handler, the expanded suite produced 13 failures and 70 passes; all 13 pass after the fix.
+- Standalone STOP accepts case variations, surrounding whitespace and trailing `.`, `!`, `?`. Whole-message anchors avoid suppressing ordinary inquiries such as “Can I stop by tomorrow?” Existing explicit withdrawal phrases remain supported. Withdrawal takes priority over same-request checkboxes and closes a pending marketing question. Repeated withdrawals retain audit entries; stale checked boxes do not restore consent.
+- New offline coverage checks prior granted/declined/unknown decisions, withdrawal before contact capture, repeated requests, blocked marketing approval on both channels, preservation of separate inquiry permission, and tenant isolation with identical contact/session identifiers. This is not provider-level suppression or a production approval.
 - No real MongoDB server, startup/index migration, full HTTP chat pipeline, model inference, browser, external calendar, email, SMS, or production acceptance test was executed. No deployment, main merge, existing customer changes, or paid model calls were made.
 
 ## What can be shown to a potential customer
@@ -84,3 +86,8 @@ The separate sales-pilot router still marks proposals `awaiting_calendar_authori
 ## Rollback
 
 This branch is unmerged and undeployed. Discard it to abandon the pilot, or revert its single commit if later adopted. No database cleanup, migration rollback, account revocation or customer notification is needed for work performed here.
+
+
+## Branch review — October 27, 2026
+
+PR #4 targets `feature/salon-sales-pilot` (PR #3), not main. Its original head was one commit ahead and zero behind PR #3 at `02022a8e9012ad0229ee34fd39853c138a23397d`. This correction stays on `pilot/isolated-salon-validation`. Keep both PRs draft pending their broader review. Recommended order: review/merge #3 first, then retarget #4 to main and inspect the resulting diff and rerun isolated checks (especially after squash/rebase). Do not merge #4 into main wholesale without reviewing its inherited #3 changes. Neither a merge nor deployment was performed for this correction.

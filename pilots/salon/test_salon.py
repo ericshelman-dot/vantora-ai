@@ -148,6 +148,6 @@ def test_timezone_winter_and_summer():
     assert sch.local_to_utc("2099-12-01", "10:00", "America/New_York").hour == 15
 
 
-@pytest.mark.xfail(strict=True, reason="Known gap: bare STOP is not recognized by existing chat opt-out parser; no live SMS allowed")
-def test_bare_stop_requires_future_delivery_hardening():
+def test_bare_stop_is_recognized():
     assert le.OPT_OUT.search("STOP")
+

@@ -17,7 +17,7 @@ No providers were connected and no messages were sent. Keep this separate from V
 3. Store provider ID and states `pending`, `sending`, `accepted`, `delivered`, `failed`, `suppressed`, `unknown`. API acceptance is not delivery. Email delivery means acceptance by the recipient mail server, not guaranteed inbox placement or reading.
 4. Use provider-supported idempotency and a durable job claim. On network timeout after submission, reconcile provider status before retrying; do not blindly resend. Retry transient 429/5xx failures with bounded exponential backoff and jitter. Permanent invalid address, opt-out, bounce or blocked number goes to suppression/manual review. Exhausted retries alert the owner through the dashboard.
 5. Verify webhook signatures against the raw request body; deduplicate event IDs, correlate tenant/provider IDs, tolerate out-of-order callbacks, and retain an audit trail. Periodically reconcile stale `accepted`/`unknown` records. Never treat missing callbacks as delivered.
-6. Process provider opt-outs and inbound STOP/START/HELP as appropriate to the provider, with suppression checks on queued work. Bare STOP is currently a documented failing chat-parser test; broader withdrawal handling is also needed. Do not turn on SMS until these pass.
+6. Process provider opt-outs and inbound STOP/START/HELP as appropriate to the provider, with suppression checks on queued work. Standalone STOP recognition in chat now has passing isolated regressions (October 27); provider inbound handling, broader withdrawal and queued-message suppression remain unimplemented. Do not turn on SMS until these pass.
 7. Keep appointment state separate from notification state: delivery failure does not cancel an otherwise saved appointment. Show “Appointment saved; confirmation not delivered—owner follow-up needed.” Cancellation/reschedule invalidates queued obsolete confirmations; each revision has its own idempotency key.
 8. Validate sandbox/provider test outcomes, then an authorized owner-controlled recipient: success, decline, unsubscribe, timeout after acceptance, 429, invalid destination, duplicate/out-of-order/forged webhooks, worker restart and budget cap. No automated fallback to a different channel without permission.
 
@@ -43,3 +43,4 @@ Illustrative SMS calculation only: 100 outbound one-segment confirmations = $0.8
 - [Twilio delivery status callbacks](https://www.twilio.com/docs/messaging/guides/track-outbound-message-status)
 
 These describe available provider capabilities. The durable worker/outbox, consent changes, security controls and failure UI above are proposed Vantora work, not already implemented integrations.
+
